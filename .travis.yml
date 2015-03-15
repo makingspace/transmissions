@@ -17,8 +17,7 @@ install:
   - pip install coveralls mock factory_boy
 
 script:
-  - coverage run --source=djcelery_transactions runtests.py
-  - coverage run --source=djcelery_transactions runtests-djcelery.py
+  - coverage run --source=transmissions runtests.py
 
 after_success:
   coveralls
