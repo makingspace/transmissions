@@ -38,14 +38,14 @@ class RunTests(Command):
         pass
 
 setup(
-    name="django-transmissions",
+    name="transmissions",
     version="0.1.0",
     description="Django transmission",
     author="Nicolas Grasset",
     author_email="nicolas.grasset@makespace.com",
-    url="https://github.com/makingspace/django-transmissions",
+    url="https://github.com/makingspace/transmissions",
     license="Simplified BSD",
-    packages=["django-transmissions"],
+    packages=["transmissions"],
     install_requires=[
         "celery>=2.2.7",
         "Django>=1.7",

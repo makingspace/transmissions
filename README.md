@@ -1,6 +1,6 @@
-# django-transmissions
+# transmissions
 
-[![Build Status](https://travis-ci.org/makingspace/django-transmissions.svg?branch=master)](https://travis-ci.org/makingspace/django-transmissions) [![Coverage Status](https://coveralls.io/repos/makingspace/django-transmissions/badge.svg?branch=master)](https://coveralls.io/r/makingspace/django-transmissions?branch=master)
+[![Build Status](https://travis-ci.org/makingspace/transmissions.svg?branch=master)](https://travis-ci.org/makingspace/transmissions) [![Coverage Status](https://coveralls.io/repos/makingspace/transmissions/badge.svg?branch=master)](https://coveralls.io/r/makingspace/transmissions?branch=master)
 
 Transmissions is a Django application that channels all user notifications via email, sms, push notifcations, etc.
 
@@ -20,7 +20,7 @@ The package is tested for Python 2.7, 3.3 and 3.4.
 1. Install the application
 
   ```bash
-  pip install django-transmissions
+  pip install transmissions
   ```
 
 1. Add transmissions to your Django settings
