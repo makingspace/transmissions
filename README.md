@@ -10,9 +10,13 @@ For now, Transmissions only works with Django 1.7 or later (due to the database 
 
 Celery and its scheduler celery beat are also a requirement (and an inspiration) for transmissions. It is probably the best way to queue up notitications to be sent and to schedule for them to continuously be checked.
 
-Finally, we require 3 packages that made the development easier, but we will re-evaluate them soon since the code needed are not very complex: `django_extensions`, `django_enumfield` and `shortuuid`.
+Finally, we require 3 packages that made developing Transmissions easier. We will re-evaluate them soon since the code needed is not very complex. 
 
-The package is tested for Python 2.7, 3.3 and 3.4.
+ * `django_extensions`
+ * `django_enumfield`
+ * `shortuuid`.
+
+***The package is tested for Python 2.7, 3.3 and 3.4.***
 
 
 ## Installation
@@ -23,13 +27,13 @@ The package is tested for Python 2.7, 3.3 and 3.4.
   pip install transmissions
   ```
 
-1. Add transmissions to your Django settings
+2. Add transmissions to your Django settings
 
   ```python
   INSTALLED_APPS += ("transmissions", )
   ````
   
-1. Add the transmissions processing task to your celerybeat schedule
+3. Add the transmissions processing task to your celerybeat schedule
 
   ```python
   CELERYBEAT_SCHEDULE['minutely_process_all_notifications'] = {
@@ -38,7 +42,7 @@ The package is tested for Python 2.7, 3.3 and 3.4.
   }
   ````
 
-1. Run the migrations for the [Notification](blob/master/transmissions/models.py) model
+4. Run the migrations for the [Notification](blob/master/transmissions/models.py) model
 
   ```bash
   python manage.py migrate
@@ -76,7 +80,7 @@ The package is tested for Python 2.7, 3.3 and 3.4.
 
 ### Notifications model
 
-The [Notification](blob/master/transmissions/models.py) model is a lightweight way to store scheduled notification as well as sent notifications. When sending messages, your application will not interacte with it directly, however, it is useful to list past notifications for your users:
+The [Notification](blob/master/transmissions/models.py) model is a lightweight way to store scheduled and sent notifications. When sending messages, your application will not interacte with it directly, however, it is useful to list past notifications for your users:
 
 #### Fields
 
@@ -87,7 +91,7 @@ The [Notification](blob/master/transmissions/models.py) model is a lightweight w
 | target_user        | ForeignKey        |    yes   | User who should receive the notification                          |
 | trigger_user       | ForeignKey        |          | User who sent/triggered the notification if any                   |
 | content            | GenericForeignKey |          | Related Django object                                             |
-| data               | Pickled object    |          | Additional data for the message. We recommend to avoid this field |
+| data               | Pickled object    |          | Additional data for the message. We recommend avoiding this field |
 | datetime_created   | datetime          |   auto   | Date of creation                                                  |
 | datetime_scheduled | datetime          |   auto   | Scheduled date to send the notification                           |
 | datetime_processed | datetime          |   auto   | Date the notification was processed (sent or failed)              |
@@ -97,7 +101,7 @@ The [Notification](blob/master/transmissions/models.py) model is a lightweight w
 
 #### Datetime fields
 
-There are a few datetime. When a message is triggered, the `datetime_created` and `datetime_scheduled` will be set. Then, when the schedule time is met, the notification will be processed and `datetime_processed` will be udpated together with the `status`. 
+When a message is triggered, the `datetime_created` and `datetime_scheduled` will be set. Then, when the schedule time is met, the notification will be processed and `datetime_processed` will be udpated together with the `status`. 
 
 It is up to your application to manage `datetime_seen`, which may be useful to maintain a notification badge on an application or website; and `datetime_consumed` which can be useful to highlight notification that have been seen but not acted upon (ex. `trigger_user.name` sent commented on your photo). In this case, `content` could be a photo, or the comment, and your app could set  `datetime_consumed` to `now()` as soon as the user loads the page or view with the comment.
 
@@ -124,7 +128,7 @@ Channels are meant to be connected to 3rd party code. `DefaultSMSMessage` and `D
 
 * `check_validity()`
 
-  Before sending a message, Transmissions will call this method to check if the notification is still valid. A common case is for a notification to be triggered in the future, and for the the conditions to send it not to be valid forever. For example, `check_validity()` of a Unpaid Invoice notification triggered when then invoice is created for 30 days later could check if the invoice has been paid. This method should return a boolean.
+  Before sending a message, Transmissions will call this method to check if the notification is still valid. A common case is for a notification to be triggered in the future, and for the the conditions to send it not to be valid forever. For example, `check_validity()` of an Unpaid Invoice notification triggered when then invoice is created for 30 days later could check if the invoice has been paid. This method should return a boolean.
 
 * `send()`
 
@@ -175,7 +179,7 @@ Messages are defined in the code base. Inspired from celery tasks, they are mean
 
 #### Trigger Behavior
 
-To keep the abstraction level in your code, you do not want to ever query for Notifications other than when listing them. This is why we added behaviors:
+To keep the abstraction level in your code, you **only** want to query for Notifications when listing them. This is why we added behaviors:
 
 * DEFAULT – A new notification is created each time the message is triggered
 * DELETE_AFTER_PROCESSING – The notification will be deleted once it's processed successfully
