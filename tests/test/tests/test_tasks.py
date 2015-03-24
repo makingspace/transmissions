@@ -10,6 +10,10 @@ from transmissions.channels.email import DefaultEmailMessage
 from transmissions.models import Notification
 from . import factories
 
+try:
+    xrange
+except NameError:
+    xrange = range
 
 TRIGGER_NAME = 'task_test'
 TRIGGER_SUBJECT = 'This is a task test'

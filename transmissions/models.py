@@ -16,6 +16,7 @@ from django.conf import settings
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
+from base64 import b64encode, b64decode
 from django_extensions.db import fields
 from django_enumfield import enum
 from transmissions.exceptions import DuplicateNotification, ChannelSendException
@@ -81,7 +82,7 @@ class Notification(BaseModel):
     @property
     def data(self):
         if not hasattr(self, '_data'):
-            self._data = {} if len(self.data_pickled) <= 0 else pickle.loads(self.data_pickled)
+            self._data = {} if len(self.data_pickled) <= 0 else pickle.loads(b64decode(self.data_pickled.encode()))
         return self._data
 
     @data.setter
@@ -122,11 +123,11 @@ class Notification(BaseModel):
         Store pickled data before saving
         """
 
-        self.data_pickled = pickle.dumps(self.data)
+        self.data_pickled = b64encode(pickle.dumps(self.data)).decode()
         super(Notification, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return 'Notification #{} to user #{}: {}'.format(self.pk, self.target_user_id, self.trigger_name)
+        return u'Notification #{} to user #{}: {}'.format(self.pk, self.target_user_id, self.trigger_name)
 
 
 class TriggerBehavior(enum.Enum):
