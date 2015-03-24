@@ -2,8 +2,7 @@
 import os
 import sys
 
-from distutils.core import setup, Command
-
+from setuptools import setup, Command
 
 class RunTests(Command):
     """RunTests class borrowed from django-celery project
@@ -37,12 +36,18 @@ class RunTests(Command):
     def finalize_options(self):
         pass
 
+description = "Transmissions is a Django application that channels all user notifications via email, sms, push notifcations, etc."
+
+with open('CHANGELOG') as file:
+    long_description = file.read()
+
 setup(
     name="transmissions",
-    version="0.1.0",
-    description="Django transmission",
-    author="Nicolas Grasset",
+    version="0.1.1",
+    author="MakeSpace Labs, Inc.",
     author_email="nicolas.grasset@makespace.com",
+    description=description,
+    long_description = long_description + "\r\n\r\n",
     url="https://github.com/makingspace/transmissions",
     license="Simplified BSD",
     packages=["transmissions"],
