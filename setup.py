@@ -48,7 +48,7 @@ setup(
     packages=["django-transmissions"],
     install_requires=[
         "celery>=2.2.7",
-        "Django>=1.5",
+        "Django>=1.7",
         "django_extensions",
         "django_enumfield",
         "shortuuid"
