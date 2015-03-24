@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.1.1 (2015-03-24)
+------------------
+
+- Pkg: Update pypi package for first release. [Nicolas Grasset]
+
 0.1.0 (2015-03-24)
 ------------------
 
@@ -15,6 +20,8 @@ New
 
 Other
 ~~~~~
+
+- Pkg: Version 0.1.0. [Nicolas Grasset]
 
 - Pkg: Documentation for 0.1.0. [Nicolas Grasset]
 
