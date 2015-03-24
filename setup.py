@@ -2,7 +2,7 @@
 import os
 import sys
 
-from setuptools import setup, Command, find_packages
+from distutils.core import setup, Command
 
 
 class RunTests(Command):
