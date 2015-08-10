@@ -50,7 +50,13 @@ setup(
     long_description = long_description + "\r\n\r\n",
     url="https://github.com/makingspace/transmissions",
     license="Simplified BSD",
-    packages=["transmissions"],
+    packages=[
+        "transmissions",
+        "transmissions.channels",
+        "transmissions.migrations",
+        "transmissions.management",
+        "transmissions.management.commands",
+    ],
     install_requires=[
         "celery>=2.2.7",
         "Django>=1.7",
