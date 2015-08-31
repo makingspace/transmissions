@@ -4,7 +4,9 @@ import sys
 
 from setuptools import setup, Command
 
+
 class RunTests(Command):
+
     """RunTests class borrowed from django-celery project
     """
     description = 'Run the django test suite from the tests dir.'
@@ -15,8 +17,8 @@ class RunTests(Command):
         from django.core.management import execute_from_command_line
         settings_module_name = 'tests.settings'
         os.environ['DJANGO_SETTINGS_MODULE'] = os.environ.get(
-                                                    'DJANGO_SETTINGS_MODULE',
-                                                    settings_module_name)
+            'DJANGO_SETTINGS_MODULE',
+            settings_module_name)
         prev_argv = sys.argv[:]
 
         this_dir = os.getcwd()
@@ -47,7 +49,7 @@ setup(
     author="MakeSpace Labs, Inc.",
     author_email="nicolas.grasset@makespace.com",
     description=description,
-    long_description = long_description + "\r\n\r\n",
+    long_description=long_description + "\r\n\r\n",
     url="https://github.com/makingspace/transmissions",
     license="Simplified BSD",
     packages=["transmissions"],
