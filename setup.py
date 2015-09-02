@@ -2,7 +2,7 @@
 import os
 import sys
 
-from setuptools import setup, Command
+from setuptools import setup, Command, find_packages
 
 
 class RunTests(Command):
@@ -45,14 +45,14 @@ with open('CHANGELOG') as file:
 
 setup(
     name="transmissions",
-    version="0.1.2",
+    version="0.1.4",
     author="MakeSpace Labs, Inc.",
     author_email="nicolas.grasset@makespace.com",
     description=description,
     long_description=long_description + "\r\n\r\n",
     url="https://github.com/makingspace/transmissions",
     license="Simplified BSD",
-    packages=["transmissions"],
+    packages=find_packages(),
     install_requires=[
         "celery>=2.2.7",
         "Django>=1.7",

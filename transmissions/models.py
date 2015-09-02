@@ -28,6 +28,7 @@ import pickle
 
 
 class BaseModel(models.Model):
+
     class Meta:
         abstract = True
 
@@ -39,6 +40,7 @@ class BaseModel(models.Model):
 
 
 class Notification(BaseModel):
+
     """
     The instance of a message triggered to a user
 
@@ -78,7 +80,6 @@ class Notification(BaseModel):
 
     status = enum.EnumField(Status, default=Status.CREATED)
 
-
     @property
     def data(self):
         if not hasattr(self, '_data'):
@@ -117,6 +118,10 @@ class Notification(BaseModel):
             if self.pk:
                 self.datetime_processed = timezone.now()
                 self.save()
+
+    def cancel(self):
+        self.status = self.Status.CANCELLED
+        self.save()
 
     def save(self, *args, **kwargs):
         """
