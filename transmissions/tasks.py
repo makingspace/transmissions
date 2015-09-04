@@ -8,7 +8,6 @@
 
 from transmissions.models import Notification
 from transmissions.lock import lock
-from django.core.cache import cache
 from django.utils import timezone
 from celery.task import task
 
