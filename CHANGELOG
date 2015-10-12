@@ -9,7 +9,7 @@ Changelog
 0.1.5 (2015-09-04)
 ------------------
 
-- Extend lock timeout to 3s. [Zach Smith]
+- Extend lock timeout to 5s. [Zach Smith]
 
 0.1.4 (2015-08-02)
 ------------------
