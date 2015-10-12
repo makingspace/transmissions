@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.1.5 (2015-10-12)
+------------------
+
+- Admin make notifications searchable by email [Nicolas Grasset]
+
 0.1.4 (2015-08-02)
 ------------------
 
