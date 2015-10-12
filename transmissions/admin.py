@@ -41,6 +41,8 @@ class NotificationAdmin(admin.ModelAdmin):
         'datetime_processed'
     ]
 
+    search_fields = ['=id', 'target_user__email']
+
     readonly_fields = ['id', 'trigger_name', _link_to_target_user, _link_to_trigger_user, 'datetime_created',
                        'datetime_processed', 'datetime_seen', 'datetime_consumed', 'content']
 
