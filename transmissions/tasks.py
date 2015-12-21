@@ -26,11 +26,11 @@ def process_notification(notification_id):
 
 @task(ignore_result=True, time_limit=55)
 def process_all_notifications():
+    notification_ids = Notification.objects.filter(datetime_scheduled__lte=timezone.now(),
+                                                   datetime_processed__isnull=True).order_by('datetime_scheduled')\
+        .values_list('id', flat=True)
 
-    notifications = Notification.objects.filter(datetime_scheduled__lte=timezone.now(),
-                                                datetime_processed__isnull=True).order_by('datetime_scheduled')
+    for notification_id in notification_ids:
+        process_notification.delay(notification_id)
 
-    for notification in notifications:
-        process_notification.delay(notification.id)
-
-    return len(notifications)
+    return len(notification_ids)

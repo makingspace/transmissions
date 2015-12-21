@@ -72,8 +72,8 @@ class Notification(BaseModel):
     data_pickled = models.TextField(blank=True, editable=False)
 
     datetime_created = models.DateTimeField(null=True, auto_now_add=True)
-    datetime_scheduled = models.DateTimeField()
-    datetime_processed = models.DateTimeField(null=True)
+    datetime_scheduled = models.DateTimeField(db_index=True)
+    datetime_processed = models.DateTimeField(db_index=True, null=True)
     datetime_seen = models.DateTimeField(null=True)
     datetime_consumed = models.DateTimeField(null=True)
 
