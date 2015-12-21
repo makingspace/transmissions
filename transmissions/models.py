@@ -15,7 +15,7 @@
 from django.conf import settings
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.fields import GenericForeignKey
 from base64 import b64encode, b64decode
 from django_extensions.db import fields
 from django_enumfield import enum
@@ -51,6 +51,8 @@ class Notification(BaseModel):
 
     `Notification` are submitting a `Trigger` through a `Channel`
     """
+    class Meta:
+        app_label = 'transmissions'
 
     class Status(enum.Enum):
         CREATED = 0
@@ -69,7 +71,7 @@ class Notification(BaseModel):
 
     content_type = models.ForeignKey(ContentType, null=True, blank=True)
     content_id = models.PositiveIntegerField(null=True, blank=True)
-    content = generic.GenericForeignKey('content_type', 'content_id')
+    content = GenericForeignKey('content_type', 'content_id')
     data_pickled = models.TextField(blank=True, editable=False)
 
     datetime_created = models.DateTimeField(null=True, auto_now_add=True)
