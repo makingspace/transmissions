@@ -51,9 +51,6 @@ class Notification(BaseModel):
 
     `Notification` are submitting a `Trigger` through a `Channel`
     """
-    class Meta:
-        app_label = 'transmissions'
-
     class Status(enum.Enum):
         CREATED = 0
         FAILED = -1
@@ -96,6 +93,7 @@ class Notification(BaseModel):
         index_together = [['datetime_processed', 'datetime_scheduled'],
                           ['target_user', 'datetime_scheduled'],
                           ['target_user', 'trigger_name', 'datetime_processed']]
+        app_label = 'transmissions'
 
     def send(self):
         """ Process notification and send via designated channel
