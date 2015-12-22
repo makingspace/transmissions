@@ -120,6 +120,7 @@ class Notification(BaseModel):
                 self.save()
 
     def cancel(self):
+        self.datetime_processed = timezone.now()
         self.status = self.Status.CANCELLED
         self.save()
 
