@@ -137,9 +137,19 @@ class Notification(BaseModel):
 
 
 class TriggerBehavior(enum.Enum):
+    """
+    Unless otherwise specified, Trigger Behaviors look for the existence of
+    notifications with the same triger name and same addressee.
+    """
+    # Delete the Notification after it's processed.
     DELETE_AFTER_PROCESSING = 0
     DEFAULT = 10
+    # There can be only one unprocessed notification at a time.
     TRIGGER_ONCE = 20
+    # There can be only one unprocessed notification for this content at a
+    # time.
     TRIGGER_ONCE_PER_CONTENT = 25
+    # There can be only one notification ever sent.
     SEND_ONCE = 30
+    # There can be only one notification for this content ever sent.
     SEND_ONCE_PER_CONTENT = 35
