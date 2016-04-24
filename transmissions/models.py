@@ -15,9 +15,9 @@
 from django.conf import settings
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes.fields import GenericForeignKey
 from base64 import b64encode, b64decode
 from django_extensions.db import fields
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django_enumfield import enum
 from transmissions.exceptions import DuplicateNotification, ChannelSendException
 from transmissions.channels import Channel

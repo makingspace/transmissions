@@ -2,7 +2,8 @@ import logging
 
 from django.test import TestCase
 
-from transmissions import Notification, message
+from transmissions import message
+from transmissions.models import Notification
 from transmissions.channels.email import DefaultEmailMessage
 from . import factories
 

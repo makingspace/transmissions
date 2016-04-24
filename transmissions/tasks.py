@@ -6,15 +6,13 @@
     Tasks to run asynchronously via Celery
 """
 
-from transmissions.models import Notification
 from transmissions.lock import lock
 from django.utils import timezone
 from celery.task import task
 
-
 @task(ignore_result=True)
 def process_notification(notification_id):
-
+    from transmissions.models import Notification
     with lock('{0}'.format(notification_id)):
         # Load notification
         notification = Notification.objects.get(pk=notification_id)
@@ -26,6 +24,7 @@ def process_notification(notification_id):
 
 @task(ignore_result=True, time_limit=55)
 def process_all_notifications():
+    from transmissions.models import Notification
     notification_ids = Notification.objects.filter(datetime_scheduled__lte=timezone.now(),
                                                    datetime_processed__isnull=True).order_by('datetime_scheduled')\
         .values_list('id', flat=True)

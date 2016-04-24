@@ -1,11 +1,9 @@
 import logging
 
-from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone
 
 from transmissions.exceptions import DuplicateNotification
 from transmissions.lock import lock
-from transmissions.models import TriggerBehavior, Notification
 
 
 register = {}
@@ -13,6 +11,8 @@ register = {}
 
 def message(trigger_name, behavior=None, **kwargs):
     def wrapper(cls):
+        from django.contrib.contenttypes.models import ContentType
+        from transmissions.models import TriggerBehavior, Notification
 
         cls.trigger_name = trigger_name
         cls.behavior = behavior if behavior in TriggerBehavior.values.keys() else TriggerBehavior.DEFAULT
