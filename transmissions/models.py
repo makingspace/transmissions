@@ -15,9 +15,9 @@
 from django.conf import settings
 from django.db import models
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic
 from base64 import b64encode, b64decode
 from django_extensions.db import fields
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django_enumfield import enum
 from transmissions.exceptions import DuplicateNotification, ChannelSendException
 from transmissions.channels import Channel
@@ -51,7 +51,6 @@ class Notification(BaseModel):
 
     `Notification` are submitting a `Trigger` through a `Channel`
     """
-
     class Status(enum.Enum):
         CREATED = 0
         FAILED = -1
@@ -69,12 +68,12 @@ class Notification(BaseModel):
 
     content_type = models.ForeignKey(ContentType, null=True, blank=True)
     content_id = models.PositiveIntegerField(null=True, blank=True)
-    content = generic.GenericForeignKey('content_type', 'content_id')
+    content = GenericForeignKey('content_type', 'content_id')
     data_pickled = models.TextField(blank=True, editable=False)
 
     datetime_created = models.DateTimeField(null=True, auto_now_add=True)
-    datetime_scheduled = models.DateTimeField()
-    datetime_processed = models.DateTimeField(null=True)
+    datetime_scheduled = models.DateTimeField(db_index=True)
+    datetime_processed = models.DateTimeField(db_index=True, null=True)
     datetime_seen = models.DateTimeField(null=True)
     datetime_consumed = models.DateTimeField(null=True)
 
@@ -94,6 +93,7 @@ class Notification(BaseModel):
         index_together = [['datetime_processed', 'datetime_scheduled'],
                           ['target_user', 'datetime_scheduled'],
                           ['target_user', 'trigger_name', 'datetime_processed']]
+        app_label = 'transmissions'
 
     def send(self):
         """ Process notification and send via designated channel
@@ -120,6 +120,7 @@ class Notification(BaseModel):
                 self.save()
 
     def cancel(self):
+        self.datetime_processed = timezone.now()
         self.status = self.Status.CANCELLED
         self.save()
 
@@ -136,9 +137,19 @@ class Notification(BaseModel):
 
 
 class TriggerBehavior(enum.Enum):
+    """
+    Unless otherwise specified, Trigger Behaviors look for the existence of
+    notifications with the same triger name and same addressee.
+    """
+    # Delete the Notification after it's processed.
     DELETE_AFTER_PROCESSING = 0
     DEFAULT = 10
+    # There can be only one unprocessed notification at a time.
     TRIGGER_ONCE = 20
+    # There can be only one unprocessed notification for this content at a
+    # time.
     TRIGGER_ONCE_PER_CONTENT = 25
+    # There can be only one notification ever sent.
     SEND_ONCE = 30
+    # There can be only one notification for this content ever sent.
     SEND_ONCE_PER_CONTENT = 35

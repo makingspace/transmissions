@@ -6,16 +6,14 @@
     Base class for channels
 
 """
-import importlib
-from django.utils.module_loading import import_by_path
-from django_enumfield import enum
-from django.conf import settings
-from transmissions.exceptions import UnknownTriggerException, ChannelSendException
 import logging
+
+from django.utils.module_loading import import_string
+from django_enumfield import enum
+from transmissions.exceptions import UnknownTriggerException, ChannelSendException
 
 
 class Channel(object):
-
 
     def __init__(self, notification):
         self.notification = notification
@@ -32,7 +30,7 @@ class Channel(object):
         # Dynamically load template class
         from transmissions.trigger import register
         if self.notification.trigger_name in register:
-            return import_by_path(register[self.notification.trigger_name])
+            return import_string(register[self.notification.trigger_name])
 
         raise UnknownTriggerException()
 
@@ -42,7 +40,6 @@ class Channel(object):
         :return: True if still valid, False if notification should be cancelled
         """
         return not hasattr(self.message, 'check_validity') or self.message.check_validity()
-
 
     def send(self):
         """ Send notification
@@ -56,4 +53,3 @@ class Channel(object):
         except Exception as e:
             logging.getLogger('django-transmissions').exception(e)
             raise ChannelSendException()
-

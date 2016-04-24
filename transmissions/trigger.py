@@ -1,15 +1,18 @@
-from functools import wraps
-from django.contrib.contenttypes.models import ContentType
+import logging
+
 from django.utils import timezone
-from transmissions.models import TriggerBehavior, Notification
+
 from transmissions.exceptions import DuplicateNotification
 from transmissions.lock import lock
-import logging
+
 
 register = {}
 
+
 def message(trigger_name, behavior=None, **kwargs):
     def wrapper(cls):
+        from django.contrib.contenttypes.models import ContentType
+        from transmissions.models import TriggerBehavior, Notification
 
         cls.trigger_name = trigger_name
         cls.behavior = behavior if behavior in TriggerBehavior.values.keys() else TriggerBehavior.DEFAULT
@@ -53,32 +56,31 @@ def message(trigger_name, behavior=None, **kwargs):
                                                 data,
                                                 silent)
 
-
         def _trigger_within_lock(cls, target_user, trigger_user=None, datetime_scheduled=None, content=None,
                                  data=None, silent=True):
 
             try:
                 if cls.behavior == TriggerBehavior.SEND_ONCE \
                         and Notification.objects.filter(target_user=target_user,
-                                                        trigger_name=cls.trigger_name).count() > 0:
+                                                        trigger_name=cls.trigger_name).exists():
                     raise DuplicateNotification()
 
                 if cls.behavior == TriggerBehavior.SEND_ONCE_PER_CONTENT \
                         and Notification.objects.filter(target_user=target_user, trigger_name=cls.trigger_name,
                                                         content_type=ContentType.objects.get_for_model(content),
-                                                        content_id=content.id).count() > 0:
+                                                        content_id=content.id).exists():
                     raise DuplicateNotification()
 
                 if cls.behavior == TriggerBehavior.TRIGGER_ONCE \
                         and Notification.objects.filter(target_user=target_user, trigger_name=cls.trigger_name,
-                                                        datetime_processed__isnull=True).count() > 0:
+                                                        datetime_processed__isnull=True).exists():
                     raise DuplicateNotification()
 
                 if cls.behavior == TriggerBehavior.TRIGGER_ONCE_PER_CONTENT \
                         and Notification.objects.filter(target_user=target_user, trigger_name=cls.trigger_name,
                                                         datetime_processed__isnull=True,
                                                         content_type=ContentType.objects.get_for_model(content),
-                                                        content_id=content.id).count() > 0:
+                                                        content_id=content.id).exists():
                     raise DuplicateNotification()
             except DuplicateNotification:
                 if not silent:

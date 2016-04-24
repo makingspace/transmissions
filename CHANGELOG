@@ -1,5 +1,19 @@
 Changelog
 =========
+0.1.7.1 (2015-12-21)
+------------------
+
+- Bug fix cancellation behavior. 
+
+0.1.7 (2015-12-21)
+------------------
+
+- Performance improvements.
+
+0.1.6.3 (2015-12-21)
+------------------
+
+- Django 1.9 compatibility tweaks.
 
 0.1.6 (2015-10-12)
 ------------------

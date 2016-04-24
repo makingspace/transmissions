@@ -7,7 +7,8 @@ from django.utils import timezone
 from django.core.management import call_command
 
 import mock
-from transmissions import message, Notification
+from transmissions import message
+from transmissions.models import Notification
 from transmissions.channels.email import DefaultEmailMessage
 from . import factories
 

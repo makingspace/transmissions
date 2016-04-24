@@ -1,7 +1,7 @@
 from optparse import make_option
 from django.utils import timezone
 from django.core.management.base import BaseCommand
-from transmissions import Notification
+from transmissions.models import Notification
 from transmissions.lock import lock
 
 
