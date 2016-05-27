@@ -26,6 +26,10 @@ from django.core.urlresolvers import reverse, NoReverseMatch
 
 import pickle
 
+if hasattr(settings, 'TRANSMISSION_USER_MODEL'):
+    USER_MODEL = settings.TRANSMISSION_USER_MODEL
+else:
+    USER_MODEL = settings.AUTH_USER_MODEL
 
 class BaseModel(models.Model):
 
@@ -62,8 +66,8 @@ class Notification(BaseModel):
 
     trigger_name = models.CharField(db_index=True, max_length=50)
 
-    target_user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='notifications')
-    trigger_user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='notifications_sent',
+    target_user = models.ForeignKey(USER_MODEL, related_name='notifications')
+    trigger_user = models.ForeignKey(USER_MODEL, related_name='notifications_sent',
                                      null=True, default=None)
 
     content_type = models.ForeignKey(ContentType, null=True, blank=True)

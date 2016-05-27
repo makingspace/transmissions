@@ -13,6 +13,11 @@ class Migration(migrations.Migration):
         ('contenttypes', '0001_initial'),
     ]
 
+    if hasattr(settings, 'TRANSMISSION_USER_MODEL'):
+        USER_MODEL = settings.TRANSMISSION_USER_MODEL
+    else:
+        USER_MODEL = settings.AUTH_USER_MODEL
+
     operations = [
         migrations.CreateModel(
             name='Notification',
@@ -29,7 +34,7 @@ class Migration(migrations.Migration):
                 ('datetime_consumed', models.DateTimeField(null=True)),
                 ('status', models.IntegerField(default=-2, db_index=True)),
                 ('content_type', models.ForeignKey(blank=True, to='contenttypes.ContentType', null=True)),
-                ('target_user', models.ForeignKey(related_name='notifications', to=settings.AUTH_USER_MODEL)),
+                ('target_user', models.ForeignKey(related_name='notifications', to=USER_MODEL)),
             ],
             options={
             },
@@ -58,7 +63,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='notification',
             name='trigger_user',
-            field=models.ForeignKey(related_name='notifications_sent', default=None, to=settings.AUTH_USER_MODEL, null=True),
+            field=models.ForeignKey(related_name='notifications_sent', default=None, to=USER_MODEL, null=True),
             preserve_default=True,
         ),
         migrations.AlterIndexTogether(
