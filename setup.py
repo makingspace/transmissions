@@ -45,7 +45,7 @@ with open('CHANGELOG') as file:
 
 setup(
     name="transmissions",
-    version="0.1.9",
+    version="0.2",
     author="MakeSpace Labs, Inc.",
     author_email="nicolas.grasset@makespace.com",
     description=description,
