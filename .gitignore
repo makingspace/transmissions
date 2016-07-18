@@ -1,6 +1,7 @@
 *.pyc
 /tags
 .ropeproject
+.pip
 
 # Distribution / packaging
 .Python

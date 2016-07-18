@@ -12,24 +12,26 @@
     Most commonly email or mobile push for iOS or Android.
 """
 
-from django.conf import settings
-from django.db import models
-from django.contrib.contenttypes.models import ContentType
-from base64 import b64encode, b64decode
-from django_extensions.db import fields
-from django.contrib.contenttypes.fields import GenericForeignKey
-from django_enumfield import enum
-from transmissions.exceptions import DuplicateNotification, ChannelSendException
-from transmissions.channels import Channel
-from django.utils import timezone
-from django.core.urlresolvers import reverse, NoReverseMatch
-
 import pickle
+from base64 import b64decode, b64encode
+
+from django.conf import settings
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
+from django.core.urlresolvers import reverse
+from django.db import models
+from django.utils import timezone
+
+from django_enumfield import enum
+from django_extensions.db import fields
+from transmissions.channels import Channel
+from transmissions.exceptions import ChannelSendException
 
 if hasattr(settings, 'TRANSMISSION_USER_MODEL'):
     USER_MODEL = settings.TRANSMISSION_USER_MODEL
 else:
     USER_MODEL = settings.AUTH_USER_MODEL
+
 
 class BaseModel(models.Model):
 
@@ -86,7 +88,10 @@ class Notification(BaseModel):
     @property
     def data(self):
         if not hasattr(self, '_data'):
-            self._data = {} if len(self.data_pickled) <= 0 else pickle.loads(b64decode(self.data_pickled.encode()))
+            if len(self.data_pickled) <= 0:
+                self._data = {}
+            else:
+                self._data = pickle.loads(b64decode(self.data_pickled.encode()))
         return self._data
 
     @data.setter
@@ -137,7 +142,8 @@ class Notification(BaseModel):
         super(Notification, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return u'Notification #{} to user #{}: {}'.format(self.pk, self.target_user_id, self.trigger_name)
+        return u'Notification #{} to user #{}: {}'.format(
+            self.pk, self.target_user_id, self.trigger_name)
 
 
 class TriggerBehavior(enum.Enum):
@@ -157,3 +163,5 @@ class TriggerBehavior(enum.Enum):
     SEND_ONCE = 30
     # There can be only one notification for this content ever sent.
     SEND_ONCE_PER_CONTENT = 35
+    # Cancel all pending notifications when a new one is scheduled.
+    LAST_ONLY = 40
