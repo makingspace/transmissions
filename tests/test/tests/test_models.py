@@ -214,3 +214,25 @@ class ModelTests(TestCase):
 
             second_notification = Notification.objects.get(pk=second_notification.id)
             self.assertEqual(second_notification.status, Notification.Status.CREATED)
+
+    def test_invalid_data(self):
+
+        welcome_path = "{}.{}".format(SimpleMessage.__module__, SimpleMessage.__name__)
+        trigger_settings = {TRIGGER_SIMPLE: welcome_path}
+        with self.settings(TRANSMISSIONS_TRIGGERS=trigger_settings):
+
+            user = factories.User()
+
+            notification = SimpleMessage.trigger(user)
+
+            self.assertEqual(notification.trigger_name, TRIGGER_SIMPLE)
+            self.assertEqual(notification.target_user, user)
+            self.assertIsNone(notification.content)
+
+            notification.data_pickled = "(dp0\n."
+            delattr(notification, '_data')
+            notification.save()
+
+            self.assertEqual(notification.status, Notification.Status.BROKEN)
+            self.assertEqual(notification.data, '{}')
+

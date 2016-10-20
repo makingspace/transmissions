@@ -138,7 +138,11 @@ class Notification(BaseModel):
         Store pickled data before saving
         """
 
-        self.data_pickled = b64encode(pickle.dumps(self.data)).decode()
+        try:
+            self.data_pickled = b64encode(pickle.dumps(self.data)).decode()
+        except:
+            self.data_pickled = b64encode(pickle.dumps('{}')).decode()
+            self.status = self.Status.BROKEN
         super(Notification, self).save(*args, **kwargs)
 
     def __unicode__(self):
