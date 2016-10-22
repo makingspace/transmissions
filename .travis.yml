@@ -7,7 +7,8 @@ python:
 
 env:
   - DJANGO="django==1.8.12"
-  - DJANGO="django==1.9.6"
+  - DJANGO="django==1.9.10"
+  - DJANGO="django==1.10.2"
 
 install:
   - pip install $DJANGO
