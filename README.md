@@ -187,6 +187,7 @@ To keep the abstraction level in your code, you **only** want to query for Notif
 * TRIGGER_ONCE_PER_CONTENT – The notification will only be triggered once per user and per content, until processed
 * SEND_ONCE – The notification will only ever be sent once per user
 * SEND_ONCE_PER_CONTENT – The notification will only ever be sent once per user and per content
+* LAST_ONLY – The notification will be triggered and all other pending (triggered) notifications will be canceled
 
 
 #### The `@message` decorator
