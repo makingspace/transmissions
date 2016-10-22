@@ -1,6 +1,15 @@
 Changelog
 =========
 
+0.2.2 (2016-10-22)
+------------------
+
+- Fix Django 1.9.x imports [Nicolas Grasset]
+
+- Handle corrupted data [Nicolas Grasset]
+
+- Implement LAST ONLY [Zach Smith]
+
 0.1.9 (2016-05-27)
 ------------------
 
