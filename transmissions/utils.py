@@ -1,3 +1,5 @@
+from six import with_metaclass
+
 
 class EnumDictType(type):
     @property
@@ -11,7 +13,7 @@ class EnumDictType(type):
             values[attribute[1]] = labels.get(attribute[1])
         return values
 
-class EnumDict(object):
-    __metaclass__ = EnumDictType
+class EnumDict(with_metaclass(EnumDictType)):
+    pass
 
 
