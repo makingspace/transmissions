@@ -1,6 +1,11 @@
 Changelog
 =========
 
+0.2.3 (2016-10-27)
+------------------
+
+- Remove dependency on django_enumfields [Nicolas Grasset]
+
 0.2.2 (2016-10-22)
 ------------------
 

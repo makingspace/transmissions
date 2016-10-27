@@ -13,7 +13,6 @@ Celery and its scheduler celery beat are also a requirement (and an inspiration)
 Finally, we require 3 packages that made developing Transmissions easier. We will re-evaluate them soon since the code needed is not very complex. 
 
  * `django_extensions`
- * `django_enumfield`
  * `shortuuid`.
 
 ***The package is tested for Python 2.7, 3.3 and 3.4.***

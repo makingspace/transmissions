@@ -45,7 +45,7 @@ with open('CHANGELOG') as file:
 
 setup(
     name="transmissions",
-    version="0.2.2",
+    version="0.2.3",
     author="MakeSpace Labs, Inc.",
     author_email="nicolas.grasset@makespace.com",
     description=description,
@@ -57,7 +57,6 @@ setup(
         "celery>=2.2.7",
         "Django>=1.8",
         "django_extensions",
-        "django_enumfield",
         "shortuuid"
     ],
     classifiers=[

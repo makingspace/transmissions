@@ -9,8 +9,8 @@
 import logging
 
 from django.utils.module_loading import import_string
-from django_enumfield import enum
 from transmissions.exceptions import UnknownTriggerException, ChannelSendException
+from transmissions.utils import EnumDict
 
 
 class Channel(object):
@@ -21,7 +21,7 @@ class Channel(object):
         template_class = self.get_template()
         self.message = template_class(self.notification)
 
-    class Types(enum.Enum):
+    class Types(EnumDict):
         EMAIL = 1
         SMS = 2
 

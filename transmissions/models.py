@@ -22,10 +22,10 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils import timezone
 
-from django_enumfield import enum
 from django_extensions.db import fields
 from transmissions.channels import Channel
 from transmissions.exceptions import ChannelSendException
+from transmissions.utils import EnumDict
 
 if hasattr(settings, 'TRANSMISSION_USER_MODEL'):
     USER_MODEL = settings.TRANSMISSION_USER_MODEL
@@ -57,7 +57,7 @@ class Notification(BaseModel):
 
     `Notification` are submitting a `Trigger` through a `Channel`
     """
-    class Status(enum.Enum):
+    class Status(EnumDict):
         CREATED = 0
         FAILED = -1
         CANCELLED = -2
@@ -83,7 +83,7 @@ class Notification(BaseModel):
     datetime_seen = models.DateTimeField(null=True)
     datetime_consumed = models.DateTimeField(null=True)
 
-    status = enum.EnumField(Status, default=Status.CREATED)
+    status = models.IntegerField(default=Status.CREATED)
 
     @property
     def data(self):
@@ -150,7 +150,7 @@ class Notification(BaseModel):
             self.pk, self.target_user_id, self.trigger_name)
 
 
-class TriggerBehavior(enum.Enum):
+class TriggerBehavior(EnumDict):
     """
     Unless otherwise specified, Trigger Behaviors look for the existence of
     notifications with the same triger name and same addressee.
