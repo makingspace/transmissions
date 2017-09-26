@@ -85,6 +85,8 @@ class Notification(BaseModel):
 
     status = models.IntegerField(default=Status.CREATED)
 
+    exception = models.TextField(blank=True, default='')
+
     @property
     def data(self):
         if not hasattr(self, '_data'):
@@ -120,8 +122,9 @@ class Notification(BaseModel):
                 self.delete()
         except ChannelSendException:
             self.status = self.Status.FAILED
-        except:
+        except Exception as e:
             self.status = self.Status.BROKEN
+            self.exception = "{klass}: {message}".format(klass=e.__class__.__name__, message=str(e))
             raise
         finally:
             if self.pk:

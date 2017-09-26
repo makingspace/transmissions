@@ -17,6 +17,7 @@ except NameError:
 
 TRIGGER_NAME = 'task_test'
 TRIGGER_SUBJECT = 'This is a task test'
+EXCEPTION_MESSAGE = 'This message is broken at init'
 
 @message(TRIGGER_NAME, behavior=None, subject=TRIGGER_SUBJECT)
 class TaskTestMessage(DefaultEmailMessage):
@@ -29,7 +30,7 @@ class BrokenMessage(DefaultEmailMessage):
 
     def __init__(self, notification):
         super(BrokenMessage, self).__init__(notification)
-        raise Exception('This message is broken at init')
+        raise Exception(EXCEPTION_MESSAGE)
 
 class TasksTests(TestCase):
 
@@ -238,7 +239,7 @@ class TasksTests(TestCase):
         self.assertEqual(notification.status, Notification.Status.CREATED)
 
         # Trigger single task
-        with self.assertRaisesMessage(Exception, 'This message is broken at init'):
+        with self.assertRaisesMessage(Exception, EXCEPTION_MESSAGE):
             tasks.process_all_notifications()
         notification = Notification.objects.get(pk=notification.id)
 
@@ -249,6 +250,7 @@ class TasksTests(TestCase):
         # Check status
         self.assertEqual(notification.status, Notification.Status.BROKEN)
         self.assertGreaterEqual(notification.datetime_processed, notification.datetime_scheduled)
+        self.assertEqual(notification.exception, "Exception: {}".format(EXCEPTION_MESSAGE))
 
         # Check email was sent
         self.assertEqual(len(mail.outbox), 0)
