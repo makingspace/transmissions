@@ -18,7 +18,12 @@ from base64 import b64decode, b64encode
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from django.core.urlresolvers import reverse
+
+try:
+    from django.urls import reverse
+except ImportError:
+    from django.core.urlresolvers import reverse
+
 from django.db import models
 from django.utils import timezone
 
@@ -68,11 +73,11 @@ class Notification(BaseModel):
 
     trigger_name = models.CharField(db_index=True, max_length=50)
 
-    target_user = models.ForeignKey(USER_MODEL, related_name='notifications')
+    target_user = models.ForeignKey(USER_MODEL, related_name='notifications', on_delete=models.CASCADE)
     trigger_user = models.ForeignKey(USER_MODEL, related_name='notifications_sent',
-                                     null=True, default=None)
+                                     null=True, default=None, on_delete=models.CASCADE)
 
-    content_type = models.ForeignKey(ContentType, null=True, blank=True)
+    content_type = models.ForeignKey(ContentType, null=True, blank=True, on_delete=models.CASCADE)
     content_id = models.PositiveIntegerField(null=True, blank=True)
     content = GenericForeignKey('content_type', 'content_id')
     data_pickled = models.TextField(blank=True, editable=False)

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-
+import django
 from django.db import models, migrations
 from django.conf import settings
 import django_extensions.db.fields
@@ -33,8 +33,8 @@ class Migration(migrations.Migration):
                 ('datetime_seen', models.DateTimeField(null=True)),
                 ('datetime_consumed', models.DateTimeField(null=True)),
                 ('status', models.IntegerField(default=-2, db_index=True)),
-                ('content_type', models.ForeignKey(blank=True, to='contenttypes.ContentType', null=True)),
-                ('target_user', models.ForeignKey(related_name='notifications', to=USER_MODEL)),
+                ('content_type', models.ForeignKey(blank=True, to='contenttypes.ContentType', null=True, on_delete=django.db.models.deletion.CASCADE)),
+                ('target_user', models.ForeignKey(related_name='notifications', to=USER_MODEL, on_delete=django.db.models.deletion.CASCADE)),
             ],
             options={
             },
@@ -57,13 +57,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='notification',
             name='trigger',
-            field=models.ForeignKey(blank=True, to='transmissions.Trigger', null=True),
+            field=models.ForeignKey(blank=True, to='transmissions.Trigger', null=True, on_delete=django.db.models.deletion.CASCADE),
             preserve_default=True,
         ),
         migrations.AddField(
             model_name='notification',
             name='trigger_user',
-            field=models.ForeignKey(related_name='notifications_sent', default=None, to=USER_MODEL, null=True),
+            field=models.ForeignKey(related_name='notifications_sent', default=None, to=USER_MODEL, null=True, on_delete=django.db.models.deletion.CASCADE),
             preserve_default=True,
         ),
         migrations.AlterIndexTogether(
