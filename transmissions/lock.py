@@ -11,7 +11,7 @@ def lock(key, timeout=5000):
     """
 
     lock_id = 'lock-transmission-{0}'.format(key)
-    acquire_lock = lambda: cache.add(lock_id, 1, timeout)
+    acquire_lock = lambda: cache.add(lock_id, 1, 90) # fix to keep the key for 90secs in redis instead of 5000sec
     release_lock = lambda: cache.delete(lock_id)
 
     waited, hops = 0, 10
