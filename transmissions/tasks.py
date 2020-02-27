@@ -13,14 +13,13 @@ from celery.task import task
 @task(ignore_result=True)
 def process_notification(notification_id):
     from transmissions.models import Notification
-    if Notification.objects.filter(pk=notification_id).exists(): #hot fix to handle race conditions
-        with lock('{0}'.format(notification_id)):
-            # Load notification
-            notification = Notification.objects.get(pk=notification_id)
+    with lock('{0}'.format(notification_id)):
+        # Load notification
+        notification = Notification.objects.get(pk=notification_id)
 
-            # Process if not processed already
-            if notification.status == Notification.Status.CREATED:
-                notification.send()
+        # Process if not processed already
+        if notification.status == Notification.Status.CREATED:
+            notification.send()
 
 
 @task(ignore_result=True, time_limit=55)
