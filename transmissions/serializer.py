@@ -40,7 +40,7 @@ def load_class(path):
 def load_serializer(settings):
 
     if hasattr(settings, 'TRANSMISSIONS_SERIALIZER'):
-        return load_class(settings.UMEBOSHI_SERIALIZER)()
+        return load_class(settings.TRANSMISSIONS_SERIALIZER)()
     else:
         return DefaultSerializer()
 
