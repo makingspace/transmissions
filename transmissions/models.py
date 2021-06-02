@@ -12,18 +12,13 @@
     Most commonly email or mobile push for iOS or Android.
 """
 
-import pickle
+# import pickle
 from base64 import b64decode, b64encode
 
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-
-try:
-    from django.urls import reverse
-except ImportError:
-    from django.core.urlresolvers import reverse
-
+from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils import timezone
 
@@ -31,6 +26,7 @@ from django_extensions.db import fields
 from transmissions.channels import Channel
 from transmissions.exceptions import ChannelSendException
 from transmissions.utils import EnumDict
+from transmissions.serializer import serializer
 
 if hasattr(settings, 'TRANSMISSION_USER_MODEL'):
     USER_MODEL = settings.TRANSMISSION_USER_MODEL
@@ -73,11 +69,11 @@ class Notification(BaseModel):
 
     trigger_name = models.CharField(db_index=True, max_length=50)
 
-    target_user = models.ForeignKey(USER_MODEL, related_name='notifications', on_delete=models.CASCADE)
+    target_user = models.ForeignKey(USER_MODEL, related_name='notifications')
     trigger_user = models.ForeignKey(USER_MODEL, related_name='notifications_sent',
-                                     null=True, default=None, on_delete=models.CASCADE)
+                                     null=True, default=None)
 
-    content_type = models.ForeignKey(ContentType, null=True, blank=True, on_delete=models.CASCADE)
+    content_type = models.ForeignKey(ContentType, null=True, blank=True)
     content_id = models.PositiveIntegerField(null=True, blank=True)
     content = GenericForeignKey('content_type', 'content_id')
     data_pickled = models.TextField(blank=True, editable=False)
@@ -96,7 +92,7 @@ class Notification(BaseModel):
             if len(self.data_pickled) <= 0:
                 self._data = {}
             else:
-                self._data = pickle.loads(b64decode(self.data_pickled.encode()))
+                self._data = serializer.loads(b64decode(self.data_pickled.encode()))
         return self._data
 
     @data.setter
@@ -144,9 +140,9 @@ class Notification(BaseModel):
         """
 
         try:
-            self.data_pickled = b64encode(pickle.dumps(self.data)).decode()
+            self.data_pickled = b64encode(serializer.dumps(self.data)).decode()
         except:
-            self.data_pickled = b64encode(pickle.dumps('{}')).decode()
+            self.data_pickled = b64encode(serializer('{}')).decode()
             self.status = self.Status.BROKEN
         super(Notification, self).save(*args, **kwargs)
 
