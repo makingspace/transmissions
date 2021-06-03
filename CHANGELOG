@@ -4,7 +4,7 @@ Changelog
 0.2.7 (2021-06-03)
 ------------------
 
-- Support Pickle serilaizer customization in config
+- Support Pickle serializer customization in config
 
 0.2.5 (2016-10-27)
 ------------------
