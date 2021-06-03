@@ -12,7 +12,6 @@
     Most commonly email or mobile push for iOS or Android.
 """
 
-import pickle
 from base64 import b64decode, b64encode
 
 from django.conf import settings
@@ -31,6 +30,7 @@ from django_extensions.db import fields
 from transmissions.channels import Channel
 from transmissions.exceptions import ChannelSendException
 from transmissions.utils import EnumDict
+from transmissions.serializer import serializer
 
 if hasattr(settings, 'TRANSMISSION_USER_MODEL'):
     USER_MODEL = settings.TRANSMISSION_USER_MODEL
@@ -96,7 +96,7 @@ class Notification(BaseModel):
             if len(self.data_pickled) <= 0:
                 self._data = {}
             else:
-                self._data = pickle.loads(b64decode(self.data_pickled.encode()))
+                self._data = serializer.loads(b64decode(self.data_pickled.encode()))
         return self._data
 
     @data.setter
@@ -144,9 +144,9 @@ class Notification(BaseModel):
         """
 
         try:
-            self.data_pickled = b64encode(pickle.dumps(self.data)).decode()
+            self.data_pickled = b64encode(serializer.dumps(self.data)).decode()
         except:
-            self.data_pickled = b64encode(pickle.dumps('{}')).decode()
+            self.data_pickled = b64encode(serializer.dumps('{}')).decode()
             self.status = self.Status.BROKEN
         super(Notification, self).save(*args, **kwargs)
 
