@@ -231,3 +231,26 @@ later = timezone.now()+timezone.timedelta(days=2)
 WelcomeSMS.trigger(user, datetime_scheduled=later)
 ```
 
+## Config Pickle Serializer
+`TRANSMISSION_SERIALIZER` (Optional): Path to custom data serializer. Default Pickle serializer will be applied if it's not speficied.
+
+Example:
+```
+# In Django setting file
+
+TRANSMISSION_SERIALIZER = "example.path.serializer.CustomSerializer"
+```
+
+Create custom serializer class. Serializer must contains `dumps` and `loads` methods
+```
+# project/example/path/serializer.py
+
+import pickle
+
+class CustomSerializer(object):
+    def dumps(self, value):
+        return pickle.dumps(value, 2)
+
+    def loads(self, value):
+        return pickle.loads(value, fix_imports=True, encoding="latin1")
+```
