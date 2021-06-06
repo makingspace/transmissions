@@ -38,18 +38,19 @@ class NotificationAdmin(admin.ModelAdmin):
         'status',
         'datetime_created',
         'datetime_scheduled',
-        'datetime_processed'
+        'datetime_processed',
+        'exception',
     ]
 
     search_fields = ['=id', 'target_user__email']
 
     readonly_fields = ['id', 'trigger_name', _link_to_target_user, _link_to_trigger_user, 'datetime_created',
-                       'datetime_processed', 'datetime_seen', 'datetime_consumed', 'content']
+                       'datetime_processed', 'datetime_seen', 'datetime_consumed', 'exception', 'content']
 
     fieldsets = (('Notifications', {'fields': ('id', _link_to_target_user, 'trigger_name')}),
                  ('Status', {'fields': (
                      'status', _link_to_trigger_user, 'datetime_created', 'datetime_scheduled', 'datetime_processed',
-                     'datetime_seen',  'datetime_consumed')}),
+                     'datetime_seen',  'datetime_consumed', 'exception')}),
                  ('Content', {'fields': ('content',)})
     )
 

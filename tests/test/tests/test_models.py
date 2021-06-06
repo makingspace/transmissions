@@ -39,6 +39,15 @@ TRIGGER_DELETE_AFTER_PROCESSING = 'trigger_delete_after'
 class TriggerDeleteAfterMessage(DefaultEmailMessage):
     template_name = 'test'
 
+TRIGGER_BROKEN = 'trigger_broken'
+@message(TRIGGER_BROKEN)
+class BrokenMessage(DefaultEmailMessage):
+    template_name = 'test'
+
+    def __init__(self, notification):
+        super(BrokenMessage, self).__init__(notification)
+        raise ValueError('This message is broken at init')
+
 class ModelTests(TestCase):
 
     def setUp(self):
@@ -236,3 +245,18 @@ class ModelTests(TestCase):
             self.assertEqual(notification.status, Notification.Status.BROKEN)
             self.assertEqual(notification.data, '{}')
 
+    def test_broken(self):
+
+        welcome_path = "{}.{}".format(SimpleMessage.__module__, SimpleMessage.__name__)
+        trigger_settings = {TRIGGER_BROKEN: welcome_path}
+        with self.settings(TRANSMISSIONS_TRIGGERS=trigger_settings):
+
+            user = factories.User()
+
+            notification = BrokenMessage.trigger(user)
+
+            with self.assertRaises(ValueError):
+                notification.send()
+
+            self.assertEqual(notification.status, Notification.Status.BROKEN)
+            self.assertEqual(notification.exception, "ValueError: This message is broken at init")
