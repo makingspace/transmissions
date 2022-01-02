@@ -11,7 +11,9 @@ def link_to_field(field_name, short_description=None, getter=None):
         field = getter(obj) if getter else getattr(obj, field_name)
 
         if field:
-            return '<a href="%s">%s</a>' % (field.get_admin_url(), field)
+            info = (field._meta.app_label, field._meta.model_name) 
+            admin_url = reverse('admin:%s_%s_change' % info, args = (field.pk, ))  
+            return format_html('<a href="%s">%s</a>' % (admin_url, field))
         return '(None)'
 
     fn.short_description = short_description or field_name.title()
