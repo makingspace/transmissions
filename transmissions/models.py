@@ -32,20 +32,22 @@ from transmissions.exceptions import ChannelSendException
 from transmissions.utils import EnumDict
 from transmissions.serializer import serializer
 
-if hasattr(settings, 'TRANSMISSION_USER_MODEL'):
+if hasattr(settings, "TRANSMISSION_USER_MODEL"):
     USER_MODEL = settings.TRANSMISSION_USER_MODEL
 else:
     USER_MODEL = settings.AUTH_USER_MODEL
 
 
 class BaseModel(models.Model):
-
     class Meta:
         abstract = True
 
     def get_admin_url(self):
         def view_name_for_model(model):
-            return "admin:%s_%s_change" % (model._meta.app_label, model._meta.model_name)
+            return "admin:%s_%s_change" % (
+                model._meta.app_label,
+                model._meta.model_name,
+            )
 
         return reverse(view_name_for_model(self), args=(self.id,))
 
@@ -62,6 +64,7 @@ class Notification(BaseModel):
 
     `Notification` are submitting a `Trigger` through a `Channel`
     """
+
     class Status(EnumDict):
         CREATED = 0
         FAILED = -1
@@ -73,13 +76,34 @@ class Notification(BaseModel):
 
     trigger_name = models.CharField(db_index=True, max_length=50)
 
-    target_user = models.ForeignKey(USER_MODEL, related_name='notifications', on_delete=models.CASCADE)
-    trigger_user = models.ForeignKey(USER_MODEL, related_name='notifications_sent',
-                                     null=True, default=None, on_delete=models.CASCADE)
+    target_user = models.ForeignKey(
+        USER_MODEL, related_name="notifications", on_delete=models.CASCADE
+    )
+    trigger_user = models.ForeignKey(
+        USER_MODEL,
+        related_name="notifications_sent",
+        null=True,
+        default=None,
+        on_delete=models.CASCADE,
+    )
 
-    content_type = models.ForeignKey(ContentType, null=True, blank=True, on_delete=models.CASCADE)
+    application_type = models.ForeignKey(
+        ContentType,
+        on_delete=models.CASCADE,
+        related_name="notifications_for_application",
+    )
+    application_id = models.PositiveIntegerField()
+    application = GenericForeignKey("application_type", "application_id")
+
+    content_type = models.ForeignKey(
+        ContentType,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE,
+        related_name="notifications_for_content",
+    )
     content_id = models.PositiveIntegerField(null=True, blank=True)
-    content = GenericForeignKey('content_type', 'content_id')
+    content = GenericForeignKey("content_type", "content_id")
     data_pickled = models.TextField(blank=True, editable=False)
 
     datetime_created = models.DateTimeField(null=True, auto_now_add=True)
@@ -92,7 +116,7 @@ class Notification(BaseModel):
 
     @property
     def data(self):
-        if not hasattr(self, '_data'):
+        if not hasattr(self, "_data"):
             if len(self.data_pickled) <= 0:
                 self._data = {}
             else:
@@ -104,14 +128,15 @@ class Notification(BaseModel):
         self._data = value
 
     class Meta:
-        index_together = [['datetime_processed', 'datetime_scheduled'],
-                          ['target_user', 'datetime_scheduled'],
-                          ['target_user', 'trigger_name', 'datetime_processed']]
-        app_label = 'transmissions'
+        index_together = [
+            ["datetime_processed", "datetime_scheduled"],
+            ["target_user", "datetime_scheduled"],
+            ["target_user", "trigger_name", "datetime_processed"],
+        ]
+        app_label = "transmissions"
 
     def send(self):
-        """ Process notification and send via designated channel
-        """
+        """Process notification and send via designated channel"""
 
         try:
             channel = Channel(self)
@@ -146,13 +171,14 @@ class Notification(BaseModel):
         try:
             self.data_pickled = b64encode(serializer.dumps(self.data)).decode()
         except:
-            self.data_pickled = b64encode(serializer.dumps('{}')).decode()
+            self.data_pickled = b64encode(serializer.dumps("{}")).decode()
             self.status = self.Status.BROKEN
         super(Notification, self).save(*args, **kwargs)
 
     def __unicode__(self):
-        return u'Notification #{} to user #{}: {}'.format(
-            self.pk, self.target_user_id, self.trigger_name)
+        return u"Notification #{} to user #{}: {}".format(
+            self.pk, self.target_user_id, self.trigger_name
+        )
 
 
 class TriggerBehavior(EnumDict):
@@ -160,6 +186,7 @@ class TriggerBehavior(EnumDict):
     Unless otherwise specified, Trigger Behaviors look for the existence of
     notifications with the same triger name and same addressee.
     """
+
     # Delete the Notification after it's processed.
     DELETE_AFTER_PROCESSING = 0
     DEFAULT = 10
